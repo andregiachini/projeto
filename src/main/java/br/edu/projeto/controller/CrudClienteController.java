@@ -12,8 +12,8 @@ import javax.inject.Named;
 
 import org.primefaces.PrimeFaces;
 
-import br.edu.projeto.dao.CamisetaDAO;
-import br.edu.projeto.model.Camiseta;
+import br.edu.projeto.dao.ClienteDAO;
+import br.edu.projeto.model.Cliente;
 
 //Escopo do objeto da classe (Bean)
 //ApplicationScoped é usado quando o objeto é único na aplicação (compartilhado entre usuários), permanece ativo enquanto a aplicação estiver ativa
@@ -25,7 +25,7 @@ import br.edu.projeto.model.Camiseta;
 @ViewScoped
 //Torna classe disponível na camada de visão (html) - são chamados de Beans ou ManagedBeans (gerenciados pelo JSF/EJB)
 @Named
-public class CrudCamisetaController implements Serializable {
+public class CrudClienteController implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	//Anotação que marca atributo para ser gerenciado pelo CDI
@@ -34,11 +34,11 @@ public class CrudCamisetaController implements Serializable {
 	private FacesContext facesContext;
 	
 	@Inject
-    private CamisetaDAO camisetaDAO;
+    private ClienteDAO clienteDAO;
 	
-	private Camiseta camiseta;
+	private Cliente cliente;
 	
-	private List<Camiseta> listaCamiseta;
+	private List<Cliente> listaCliente;
 	
 	private Boolean rendNovoCadastro;
 	
@@ -46,12 +46,12 @@ public class CrudCamisetaController implements Serializable {
     @PostConstruct
     public void init() {
     	//Inicializa elementos importantes
-    	this.setListaCamiseta(camisetaDAO.listAll());
+    	this.setListaCamiseta(clienteDAO.listAll());
     }
 	
     //Chamado pelo botão novo
 	public void novoCadastro() {
-        this.setCamiseta(new Camiseta());
+        this.setCliente(new Cliente());
         this.setRendNovoCadastro(true);
     }
 	
@@ -62,21 +62,21 @@ public class CrudCamisetaController implements Serializable {
 	
 	//Chamado pelo botão remover da tabela
 	public void remover() {
-		if (this.camisetaDAO.delete(this.camiseta)) {
-			this.facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Camiseta Removida", null));
-			this.listaCamiseta.remove(this.camiseta);
+		if (this.clienteDAO.delete(this.cliente)) {
+			this.facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Cliente Removido", null));
+			this.listaCliente.remove(this.cliente);
 		} else 
-			this.facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Falha ao Remover Camiseta", null));
+			this.facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Falha ao Remover Cliente", null));
 		//Após excluir usuário é necessário recarregar lista que popula tabela com os novos dados
-		//this.listaCamiseta = camisetaDAO.listAll();
+		this.listaCliente = clienteDAO.listAll();
         //Limpa seleção de usuário
-		this.camiseta = null;
+		this.cliente = null;
         PrimeFaces.current().ajax().update("form:messages", "form:dt-camisetas");
 	}	
 	
 	//Chamado ao salvar cadastro de usuário (novo)
 	public void salvarNovo() {
-		if (this.camiseta.getTamanho().equals("P") || this.camiseta.getTamanho().equals("M") || this.camiseta.getTamanho().equals("G"))
+		if (this.cliente.getTamanhos().equals("P") || this.camiseta.getTamanho().equals("M") || this.camiseta.getTamanho().equals("G"))
 		{
 			if (this.camisetaDAO.insert(this.camiseta)) {
 				this.getListaCamiseta().add(this.camiseta);
@@ -111,20 +111,20 @@ public class CrudCamisetaController implements Serializable {
 	//GETs e SETs
 	//GETs são necessários para elementos visíveis em tela
 	//SETs são necessários para elementos que serão editados em tela
-	public Camiseta getCamiseta() {
-		return camiseta;
+	public Cliente getCliente() {
+		return cliente;
 	}
 
-	public void setCamiseta(Camiseta camiseta) {
-		this.camiseta = camiseta;
+	public void setCliente(Cliente cliente) {
+		this.cliente = cliente;
 	}
 
-	public List<Camiseta> getListaCamiseta() {
-		return listaCamiseta;
+	public List<Cliente> getListaCliente() {
+		return listaCliente;
 	}
 
-	public void setListaCamiseta(List<Camiseta> listaCamiseta) {
-		this.listaCamiseta = listaCamiseta;
+	public void setListaCliente(List<Cliente> listaCliente) {
+		this.listaCliente = listaCliente;
 	}
 
 	public Boolean getRendNovoCadastro() {
